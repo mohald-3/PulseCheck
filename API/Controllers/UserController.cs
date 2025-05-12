@@ -1,7 +1,10 @@
-﻿using Application.DTOs.UserDtos;
+﻿using Application.Commands.User;
+using Application.DTOs.UserDtos;
 using Application.Services.Interfaces;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +16,13 @@ namespace API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper, IMediator mediator)
         {
             _userService = userService;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         // GET: api/user
@@ -45,23 +50,30 @@ namespace API.Controllers
             return Ok(user);
         }
 
+        // Done
         // POST: api/User/register
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserCreateDto userRegistrationData)
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
-            var result = await _userService.RegisterUserAsync(userRegistrationData);
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest(result);
+
             return Ok(result);
         }
 
+        // Done
         // POST: api/User/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginData)
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
-            var result = await _userService.LoginUserAsync(loginData);
-            if (result == null)
-                return Unauthorized("Invalid credentials.");
+            var result = await _mediator.Send(command);
 
-            return Ok(result); // result should be a LoginResponseDto
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
         }
 
         // PATCH: api/user/{id}
@@ -86,6 +98,18 @@ namespace API.Controllers
                 return NotFound();
 
             return NoContent(); // 204 — successful but nothing returned
+        }
+
+        // Done
+        // RefreshToken generator
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
         }
 
     }
