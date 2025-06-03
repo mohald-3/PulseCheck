@@ -4,6 +4,7 @@ using Application.Services.Interfaces;
 using Application.Validators;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Application
 {
@@ -17,6 +18,8 @@ namespace Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFriendshipService, FriendshipService>();
             services.AddScoped<ICheckInService, CheckInService>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
 
             return services;
         }

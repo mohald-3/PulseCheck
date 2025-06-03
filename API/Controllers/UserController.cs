@@ -1,9 +1,13 @@
-﻿using Application.DTOs.UserDtos;
+﻿using Application.Commands.User;
+using Application.Commands.User.Application.Commands.User;
+using Application.DTOs.UserDtos;
+using Application.Queries.User;
 using Application.Services.Interfaces;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -13,15 +17,19 @@ namespace API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper, IMediator mediator)
         {
             _userService = userService;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
-        // GET: api/user
-        [HttpGet]
+        // GET: api/user/filter?...
+        // More like an admin tool and SHOULD have authoization role for admin [Authorize(Roles = "Admin")]
+        //[Authorize]
+        [HttpGet("filter")]
         public async Task<IActionResult> GetFilteredUsers(
             [FromQuery] string? search,
             [FromQuery] string? sort = "created",
@@ -29,63 +37,110 @@ namespace API.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
-            var users = await _userService.GetFilteredUsersAsync(search, sort, order, page, pageSize);
-            return Ok(users);
-        }
+            var query = new GetFilteredUsersQuery
+            {
+                Search = search,
+                Sort = sort,
+                Order = order,
+                Page = page,
+                PageSize = pageSize
+            };
 
-        // GET: api/user/{id}
-        [Authorize]
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserById(int userId)
-        {
-            var user = await _userService.GetUserByIdAsync(userId);
-            if (user == null)
-                return NotFound();
-
-            return Ok(user);
-        }
-
-        // POST: api/User/register
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserCreateDto userRegistrationData)
-        {
-            var result = await _userService.RegisterUserAsync(userRegistrationData);
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 
+        // Done
+        // GET: api/user/me
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetUserById()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
+
+            var userId = int.Parse(userIdClaim);
+            var result = await _mediator.Send(new GetUserByIdQuery(userId));
+
+            if (!result.Success)
+                return NotFound(result.Message);
+
+            return Ok(result.Data);
+        }
+
+        // Done
+        // POST: api/User/register
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        // Done
         // POST: api/User/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginData)
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
-            var result = await _userService.LoginUserAsync(loginData);
-            if (result == null)
-                return Unauthorized("Invalid credentials.");
+            var result = await _mediator.Send(command);
 
-            return Ok(result); // result should be a LoginResponseDto
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
         }
 
+        // Done
         // PATCH: api/user/{id}
         [Authorize]
-        [HttpPatch("{userId}")]
-        public async Task<IActionResult> UpdateUser(int userId, [FromBody] UserUpdateDto updatedData)
+        [HttpPatch("update")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto updatedData)
         {
-            var updatedUser = await _userService.UpdateUserAsync(userId, updatedData);
-            if (updatedUser == null)
-                return NotFound();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
 
-            return Ok(updatedUser);
+            var userId = int.Parse(userIdClaim);
+            var result = await _mediator.Send(new UpdateUserCommand(userId, updatedData));
+
+            if (!result.Success)
+                return NotFound(result.Message);
+
+            return Ok(result.Data);
         }
 
+        // Done
         // DELETE: api/user/{id}
         [Authorize]
-        [HttpDelete("{userId}")]
-        public async Task<IActionResult> SoftDeleteUser(int userId)
+        [HttpDelete]
+        public async Task<IActionResult> SoftDeleteUser()
         {
-            var success = await _userService.SoftDeleteUserAsync(userId);
-            if (!success)
-                return NotFound();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            return NoContent(); // 204 — successful but nothing returned
+            var result = await _mediator.Send(new SoftDeleteUserCommand(userId));
+
+            return Ok(new
+            {
+                Message = "User deleted successfully.",
+                Deleted = true
+            });
+        }
+
+        // Done
+        // RefreshToken generator
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (!result.Success)
+                return Unauthorized(result);
+
+            return Ok(result);
         }
 
     }
