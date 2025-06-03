@@ -16,12 +16,11 @@ namespace Application.Commands.User
 
         public async Task<OperationResult<bool>> Handle(SoftDeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _userRepository.SoftDeleteAsync(request.UserId);
+            var success = await _userRepository.SoftDeleteAsync(request.UserId);
 
-            if (!result)
-                return OperationResult<bool>.Failure("User not found or already deleted.");
-
-            return OperationResult<bool>.SuccessResult(true);
+            return success
+                ? OperationResult<bool>.SuccessResult(true)
+                : OperationResult<bool>.Failure("User not found or already deleted.");
         }
     }
 }

@@ -20,9 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Commands\Friendship\" />
-    <Folder Include="Commands\CheckIn\" />
     <Folder Include="Queries\Friendship\" />
-    <Folder Include="Queries\CheckIn\" />
   </ItemGroup>
 
 </Project>
