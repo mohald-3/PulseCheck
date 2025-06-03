@@ -3,7 +3,6 @@ using Application.Commands.User;
 using Application.Commands.User.Application.Commands.User;
 using Application.DTOs.UserDtos;
 using Application.Queries.User;
-using Application.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +13,10 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly IMediator _mediator;
 
-        public UserController(IUserService userService, IMediator mediator)
+        public UserController(IMediator mediator)
         {
-            _userService = userService;
             _mediator = mediator;
         }
 

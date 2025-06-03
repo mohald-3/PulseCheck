@@ -5,8 +5,8 @@ using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Application.Services.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 
 namespace Infrastructure
 {
@@ -25,6 +25,7 @@ namespace Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IFriendshipRepository, FriendshipRepository>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IRequestLogger, RequestLogger>();
 
             return services;
         }

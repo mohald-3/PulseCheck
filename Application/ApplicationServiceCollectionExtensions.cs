@@ -1,8 +1,6 @@
-﻿using Application.Mapping;
-using Application.Services.Implementation;
-using Application.Services.Interfaces;
-using Application.Validators;
-using FluentValidation;
+﻿using Application.Behaviors;
+using Application.Mapping;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -13,13 +11,9 @@ namespace Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
-            services.AddValidatorsFromAssemblyContaining<UserCreateDtoValidator>();
-
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IFriendshipService, FriendshipService>();
-            services.AddScoped<ICheckInService, CheckInService>();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             return services;
         }
