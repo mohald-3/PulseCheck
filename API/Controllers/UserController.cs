@@ -4,8 +4,6 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -25,8 +23,8 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        // GET: api/user
-        [HttpGet]
+        // GET: api/user/filter?...
+        [HttpGet("filter")]
         public async Task<IActionResult> GetFilteredUsers(
             [FromQuery] string? search,
             [FromQuery] string? sort = "created",
