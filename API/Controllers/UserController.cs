@@ -82,7 +82,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        // PATCH: api/user/
+        // PATCH: api/user/update
         [Authorize]
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto updatedData)
