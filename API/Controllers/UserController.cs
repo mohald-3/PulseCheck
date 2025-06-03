@@ -82,7 +82,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        // PATCH: api/user/{id}
+        // PATCH: api/user/
         [Authorize]
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto updatedData)
@@ -96,7 +96,7 @@ namespace API.Controllers
             return Ok(result.Data);
         }
 
-        // DELETE: api/user/{id}
+        // DELETE: api/user
         [Authorize]
         [HttpDelete]
         public async Task<IActionResult> SoftDeleteUser()
