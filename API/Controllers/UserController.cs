@@ -5,6 +5,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -76,14 +77,20 @@ namespace API.Controllers
 
         // PATCH: api/user/{id}
         [Authorize]
-        [HttpPatch("{userId}")]
-        public async Task<IActionResult> UpdateUser(int userId, [FromBody] UserUpdateDto updatedData)
+        [HttpPatch("update")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto updatedData)
         {
-            var updatedUser = await _userService.UpdateUserAsync(userId, updatedData);
-            if (updatedUser == null)
-                return NotFound();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
 
-            return Ok(updatedUser);
+            var userId = int.Parse(userIdClaim);
+            var result = await _mediator.Send(new UpdateUserCommand(userId, updatedData));
+
+            if (!result.Success)
+                return NotFound(result.Message);
+
+            return Ok(result.Data);
         }
 
         // DELETE: api/user/{id}
