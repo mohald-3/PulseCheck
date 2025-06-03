@@ -4,7 +4,7 @@ namespace API.Helper
 {
     public static class SwaggerHelper
     {
-        public static void ConfigureSwagger(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
             {
