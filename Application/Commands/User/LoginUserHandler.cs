@@ -3,7 +3,6 @@ using Application.DTOs.UserDtos;
 using Application.Interfaces.Repositories;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Domain.Models;
 using MediatR;
 
 namespace Application.Commands.User

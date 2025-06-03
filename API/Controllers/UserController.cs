@@ -26,8 +26,9 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        // usage would be for finding friends by searching for their email or name or phone number
         // GET: api/user/filter?...
+        // More like an admin tool and SHOULD have authoization role for admin [Authorize(Roles = "Admin")]
+        //[Authorize]
         [HttpGet("filter")]
         public async Task<IActionResult> GetFilteredUsers(
             [FromQuery] string? search,
@@ -36,8 +37,17 @@ namespace API.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
-            var users = await _userService.GetFilteredUsersAsync(search, sort, order, page, pageSize);
-            return Ok(users);
+            var query = new GetFilteredUsersQuery
+            {
+                Search = search,
+                Sort = sort,
+                Order = order,
+                Page = page,
+                PageSize = pageSize
+            };
+
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         // Done
