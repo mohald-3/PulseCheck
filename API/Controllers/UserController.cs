@@ -1,5 +1,6 @@
 ﻿using Application.Commands.User;
 using Application.DTOs.UserDtos;
+using Application.Queries.User;
 using Application.Services.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -24,6 +25,7 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+        // usage would be for finding friends by searching for their email or name or phone number
         // GET: api/user/filter?...
         [HttpGet("filter")]
         public async Task<IActionResult> GetFilteredUsers(
@@ -37,16 +39,23 @@ namespace API.Controllers
             return Ok(users);
         }
 
-        // GET: api/user/{id}
+        // Done
+        // GET: api/user/me
         [Authorize]
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserById(int userId)
+        [HttpGet("me")]
+        public async Task<IActionResult> GetUserById()
         {
-            var user = await _userService.GetUserByIdAsync(userId);
-            if (user == null)
-                return NotFound();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
 
-            return Ok(user);
+            var userId = int.Parse(userIdClaim);
+            var result = await _mediator.Send(new GetUserByIdQuery(userId));
+
+            if (!result.Success)
+                return NotFound(result.Message);
+
+            return Ok(result.Data);
         }
 
         // Done
@@ -75,6 +84,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        // Done
         // PATCH: api/user/{id}
         [Authorize]
         [HttpPatch("update")]

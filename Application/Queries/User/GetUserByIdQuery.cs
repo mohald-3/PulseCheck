@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Common;
+using Application.DTOs.UserDtos;
+using MediatR;
 
 namespace Application.Queries.User
 {
-    internal class GetUserByIdQuery
-    {
-    }
+    public record GetUserByIdQuery(int UserId) : IRequest<OperationResult<UserDto>>;
 }
