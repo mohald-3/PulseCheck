@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs.UserDtos;
 using Application.Interfaces.Repositories;
-using Application.Services.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using MediatR;
 
@@ -32,8 +32,6 @@ namespace Application.Commands.User
             user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
 
             await _userRepository.UpdateAsync(user.UserId, user);
-
-            // need to implement refresh token check here 
             var token = _tokenService.CreateToken(user);
 
             var response = new LoginResponseDto

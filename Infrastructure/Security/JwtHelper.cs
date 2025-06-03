@@ -14,7 +14,7 @@ namespace Infrastructure.Security
             services.Configure<JwtSettings>(jwtSettingsSection);
 
             var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
-            var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
+            var key = Encoding.UTF8.GetBytes(jwtSettings!.SecretKey);
 
             services.AddAuthentication(options =>
             {

@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Application.Services.Interfaces
+namespace Application.Interfaces.Services
 {
     public interface ITokenService
     {

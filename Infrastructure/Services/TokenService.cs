@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Application.Services.Interfaces;
+using Application.Interfaces.Services;
 
 
 namespace Infrastructure.Services
@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email !),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
                 // You can add roles or custom claims here too
             };

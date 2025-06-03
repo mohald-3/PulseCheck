@@ -1,8 +1,7 @@
 ﻿namespace Application.DTOs.FriendshipDtos
 {
-    public class FriendshipCreateDto
+    public class FriendshipEditingDto
     {
-        public int UserId { get; set; }
         public int FriendId { get; set; }
     }
 }

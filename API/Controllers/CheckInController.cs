@@ -1,8 +1,6 @@
 ﻿using API.Helper;
 using Application.Commands.CheckIn;
-using Application.DTOs.CheckInDtos;
 using Application.Queries.CheckIn;
-using Application.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +12,10 @@ namespace API.Controllers
     [ApiController]
     public class CheckInController : ControllerBase
     {
-        private readonly ICheckInService _checkInService;
         private readonly IMediator _mediator;
 
-        public CheckInController(ICheckInService checkInService, IMediator mediator)
+        public CheckInController( IMediator mediator)
         {
-            _checkInService = checkInService;
             _mediator = mediator;
         }
 

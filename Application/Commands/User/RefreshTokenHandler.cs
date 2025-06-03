@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs.UserDtos;
 using Application.Interfaces.Repositories;
-using Application.Services.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Models;
 using MediatR;

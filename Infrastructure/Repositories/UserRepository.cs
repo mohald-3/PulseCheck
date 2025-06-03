@@ -31,10 +31,10 @@ namespace Infrastructure.Repositories
             {
                 search = search.ToLower();
                 query = query.Where(u =>
-                    u.FirstName.ToLower().Contains(search) ||
-                    u.LastName.ToLower().Contains(search) ||
-                    u.Email.ToLower().Contains(search) ||
-                    u.Phone.Contains(search));
+                    u.FirstName!.ToLower().Contains(search) ||
+                    u.LastName!.ToLower().Contains(search) ||
+                    u.Email!.ToLower().Contains(search) ||
+                    u.Phone!.Contains(search));
             }
 
             switch (sort?.ToLower())

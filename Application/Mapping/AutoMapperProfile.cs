@@ -17,7 +17,7 @@ namespace Application.Mapping
             CreateMap<CheckInCreateDto, CheckIn>();
 
             CreateMap<Friendship, FriendshipDto>();
-            CreateMap<FriendshipCreateDto, Friendship>();
+            CreateMap<FriendshipEditingDto, Friendship>();
         }
     }
 }

@@ -10,6 +10,8 @@ namespace Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<CheckIn> CheckIns { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<RequestLog> RequestLogs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
