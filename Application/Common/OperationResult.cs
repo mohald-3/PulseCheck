@@ -17,7 +17,7 @@
             return new OperationResult<T>
             {
                 Success = false,
-                Message = message,
+                Message = message ?? error,
                 Errors = new List<string> { error }
             };
         }
