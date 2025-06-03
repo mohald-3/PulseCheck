@@ -1,4 +1,5 @@
 ﻿using Application.Commands.User;
+using Application.Commands.User.Application.Commands.User;
 using Application.DTOs.UserDtos;
 using Application.Queries.User;
 using Application.Services.Interfaces;
@@ -103,16 +104,21 @@ namespace API.Controllers
             return Ok(result.Data);
         }
 
+        // Done
         // DELETE: api/user/{id}
         [Authorize]
-        [HttpDelete("{userId}")]
-        public async Task<IActionResult> SoftDeleteUser(int userId)
+        [HttpDelete]
+        public async Task<IActionResult> SoftDeleteUser()
         {
-            var success = await _userService.SoftDeleteUserAsync(userId);
-            if (!success)
-                return NotFound();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            return NoContent(); // 204 — successful but nothing returned
+            var result = await _mediator.Send(new SoftDeleteUserCommand(userId));
+
+            return Ok(new
+            {
+                Message = "User deleted successfully.",
+                Deleted = true
+            });
         }
 
         // Done
