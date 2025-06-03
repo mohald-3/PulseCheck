@@ -12,6 +12,7 @@
 * ✅ Self check-in history and friend history
 * ✅ OperationResult-wrapped responses for consistency
 * ✅ Swagger documentation and Postman collection
+* ✅ Unit tests for MediatR Command/Query handlers
 
 ---
 
@@ -32,6 +33,7 @@ PulseCheck/
 │   ├── Data/
 │   ├── Services/
 │   └── Seed/
+├── Tests/                     # Unit tests for command/query handlers
 └── PulseCheck.sln             # Solution file
 ```
 
@@ -47,6 +49,7 @@ PulseCheck/
 * SQL Server
 * Swagger / Swashbuckle
 * Postman (for API testing)
+* FakeItEasy + NUnit (for unit testing)
 
 ---
 
@@ -131,9 +134,27 @@ https://localhost:<port>/swagger
 
 ---
 
+## 🧪 Unit Testing
+
+Unit tests are located in the `Application.Tests` project. The tests cover key MediatR handlers such as:
+
+* `GetUserByIdHandler`
+* `LoginUserHandler`
+
+These tests use **FakeItEasy** and **NUnit** to mock dependencies and verify business logic.
+
+### Run tests
+
+```bash
+dotnet test Application.Tests
+```
+
+---
+
 ## 👤 Author
 
 **Mohanad Al-Daghestani**
 .NET Developer @ NBI Handelsakademin
 
 Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/al-daghestani/) or GitHub if you have questions!
+
