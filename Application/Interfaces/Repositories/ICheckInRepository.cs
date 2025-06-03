@@ -6,6 +6,7 @@ namespace Application.Interfaces.Repositories
     {
         Task<List<CheckIn>> GetUserCheckInsAsync(int userId);
         Task<CheckIn?> GetCheckInByIdAsync(int id);
+        Task<bool> HasUserCheckedInTodayAsync(int userId, DateTime today);
         Task<CheckIn> CreateAsync(CheckIn checkIn);
         Task<bool> DeleteAsync(int id);
 

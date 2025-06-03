@@ -22,6 +22,12 @@ namespace Infrastructure.Repositories
             return checkIn;
         }
 
+        public async Task<bool> HasUserCheckedInTodayAsync(int userId, DateTime today)
+        {
+            return await _context.CheckIns
+                .AnyAsync(ci => ci.UserId == userId && ci.Timestamp.Date == today);
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             var entity = await _context.CheckIns.FindAsync(id);
