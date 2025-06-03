@@ -105,6 +105,9 @@ namespace API.Controllers
 
             var result = await _mediator.Send(new SoftDeleteUserCommand(userId));
 
+            if (!result.Success)
+                return NotFound(result.Message); 
+
             return Ok(result.Data);
         }
 
